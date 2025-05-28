@@ -60,7 +60,7 @@ class SimulationViewController: UIViewController , UIDocumentPickerDelegate,Furn
     
     func convertUSDZToSCNAndLoad(url: URL) {
         guard url.startAccessingSecurityScopedResource() else {
-            print("❌ 접근 권한 실패")
+            print(" 접근 권한 실패")
             return
         }
         defer { url.stopAccessingSecurityScopedResource() }
@@ -69,26 +69,26 @@ class SimulationViewController: UIViewController , UIDocumentPickerDelegate,Furn
         asset.loadTextures()
         let scene = SCNScene(mdlAsset: asset)
 
-        // ✅ 저장 위치
+        //  저장 위치
         let documents = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first!
         let scnURL = documents.appendingPathComponent("converted.scn")
         
         do {
             try scene.write(to: scnURL, options: nil, delegate: nil, progressHandler: nil)
-            print("✅ .scn 파일로 저장 완료: \(scnURL)")
+            print(".scn 파일로 저장 완료: \(scnURL)")
             
             let loadedScene = try SCNScene(url: scnURL, options: nil)
 
-//            // 🌑 모델 머티리얼 어둡게 처리
+//            // 모델 머티리얼 어둡게 처리
             darkenUSDZMaterials(in: loadedScene.rootNode)
 
-            // ✅ 조명 설정 등 추가 구성
+            //  조명 설정 등 추가 구성
             setupSceneExtras(scene: loadedScene)
 
-            // ✅ 씬 적용
+            //  씬 적용
             sceneView.scene = loadedScene
         } catch {
-            print("❌ 저장/불러오기 실패: \(error)")
+            print(" 저장/불러오기 실패: \(error)")
         }
     }
     func darkenUSDZMaterials(in node: SCNNode) {
@@ -96,14 +96,14 @@ class SimulationViewController: UIViewController , UIDocumentPickerDelegate,Furn
             darkenUSDZMaterials(in: child)  // 재귀 호출
             if let geometry = child.geometry {
                 for material in geometry.materials {
-                    material.multiply.contents = UIColor(white: 0.5, alpha: 1.0)  // 🌑 밤 느낌
+                    material.multiply.contents = UIColor(white: 0.5, alpha: 1.0)  // 밤 느낌
                 }
             }
         }
     }
 
     func setupSceneExtras(scene: SCNScene) {
-//        // ✅ 구체 머티리얼 (빛나는 효과)
+//        // 구체 머티리얼 (빛나는 효과)
 //        let sphere = SCNSphere(radius: 0.3)
 //        let glowingMaterial = SCNMaterial()
 //        glowingMaterial.diffuse.contents = UIColor.white
@@ -117,7 +117,7 @@ class SimulationViewController: UIViewController , UIDocumentPickerDelegate,Furn
 //        sphereNode.position = SCNVector3(0, 0, 0)
 //        sphereNode.name = "furniture_lighting"
 //        scene.rootNode.addChildNode(sphereNode)
-////         ✅ 구체에 부착할 조명
+////        구체에 부착할 조명
 //        let sphereLight = SCNLight()
 //        sphereLight.type = .omni
 //        sphereLight.intensity = 400
@@ -137,7 +137,7 @@ class SimulationViewController: UIViewController , UIDocumentPickerDelegate,Furn
 
         let adjustableLight = SCNLight()
         adjustableLight.type = .omni
-        adjustableLight.intensity = 0  // 🌞 낮처럼 밝게
+        adjustableLight.intensity = 0  //  낮처럼 밝게
         adjustableLight.color = UIColor.white
 
         let adjustableLightNode = SCNNode()
@@ -157,19 +157,19 @@ class SimulationViewController: UIViewController , UIDocumentPickerDelegate,Furn
         if let hit = hits.first,
            let newSelected = findFurnitureContainer(node: hit.node) {
 
-            // ✅ 기존 선택 해제
+            // 기존 선택 해제
             if let previous = selectedNode {
                 restoreOriginalMaterials(node: previous)
             }
 
-            // ✅ 새로 선택
+            // 새로 선택
             selectedNode = newSelected
             sceneView.allowsCameraControl = false
             highlight(node: newSelected)
 
-            print("✅ \(newSelected.name ?? "") 선택됨")
+            print(" \(newSelected.name ?? "") 선택됨")
         } else {
-            // ✅ 아무것도 선택되지 않았을 때
+            //  아무것도 선택되지 않았을 때
             if let previous = selectedNode {
                 restoreOriginalMaterials(node: previous)
             }
@@ -217,14 +217,14 @@ class SimulationViewController: UIViewController , UIDocumentPickerDelegate,Furn
 
         let location = touch.location(in: sceneView)
 
-        // ✅ 현재 위치를 3D 공간의 위치로 투영
+        //  현재 위치를 3D 공간의 위치로 투영
         let projectedOrigin = sceneView.projectPoint(node.position)
         let projectedNew = SCNVector3(Float(location.x), Float(location.y), projectedOrigin.z)
 
-        // ✅ 다시 3D 공간으로 역투영
+        //  다시 3D 공간으로 역투영
         let newWorldPosition = sceneView.unprojectPoint(projectedNew)
 
-        // ✅ 새로운 위치로 이동
+        //  새로운 위치로 이동
         node.position = newWorldPosition
     }
 
@@ -238,7 +238,7 @@ class SimulationViewController: UIViewController , UIDocumentPickerDelegate,Furn
         }
     func adjustCamera(zDelta: Float) {
         guard let cameraNode = sceneView.scene?.rootNode.childNodes.first(where: { $0.camera != nil }) else {
-            print("❌ 카메라 노드 없음")
+            print(" 카메라 노드 없음")
             return
         }
 
@@ -250,7 +250,7 @@ class SimulationViewController: UIViewController , UIDocumentPickerDelegate,Furn
     @IBAction func brightnessSliderChanged(_ sender: UISlider) {
         let ratio = CGFloat(sender.value)  // 0.0 ~ 1.0 (1.0: 낮, 0.0: 밤)
         
-        // ✅ 낮에서 밤으로 점점 어두워지도록
+        //  낮에서 밤으로 점점 어두워지도록
         let nightIntensity = CGFloat(500)   // 완전한 밤 느낌
         let dayIntensity = CGFloat(5000)  // 아주 밝은 낮
 
@@ -281,7 +281,7 @@ class SimulationViewController: UIViewController , UIDocumentPickerDelegate,Furn
 
     func didSelectUSDZModel(named fileName: String) {
         guard let url = Bundle.main.url(forResource: fileName, withExtension: "usdz") else {
-            print("❌ 파일 못 찾음: \(fileName)")
+            print("파일 못 찾음: \(fileName)")
             return
         }
 
@@ -289,11 +289,11 @@ class SimulationViewController: UIViewController , UIDocumentPickerDelegate,Furn
         asset.loadTextures()
         let tempScene = SCNScene(mdlAsset: asset)
 
-        // ✅ 전체 모델을 감싸는 컨테이너 노드 생성
+        //  전체 모델을 감싸는 컨테이너 노드 생성
         let containerNode = SCNNode()
         containerNode.name = "furniture_\(fileName)"
 
-        // ✅ 전체 모델 복제 후 컨테이너에 추가
+        //  전체 모델 복제 후 컨테이너에 추가
         let modelNode = tempScene.rootNode.clone()
         for child in modelNode.childNodes {
             containerNode.addChildNode(child)
@@ -316,11 +316,11 @@ class SimulationViewController: UIViewController , UIDocumentPickerDelegate,Furn
             let lightNode = SCNNode()
             lightNode.light = light
 
-            // ✅ rootNode에 추가 → 빛은 전체 공간 기준으로 퍼짐
+            //  rootNode에 추가 → 빛은 전체 공간 기준으로 퍼짐
             sceneView.scene?.rootNode.addChildNode(lightNode)
             lightNode.constraints = [constrainLightPosition(to: containerNode, offsetY: 1.0)]
 
-//            // ✅ 위치는 containerNode(조명 모델)와 함께 이동하도록 constraint 설정
+//            //  위치는 containerNode(조명 모델)와 함께 이동하도록 constraint 설정
 //            let constraint = SCNTransformConstraint(inWorldSpace: true) { _, _ in
 //                var transform = containerNode.worldTransform
 //                transform.m42 -= 0.5  // 조명 모델 아래쪽에 위치
@@ -328,7 +328,7 @@ class SimulationViewController: UIViewController , UIDocumentPickerDelegate,Furn
 //            }
 //            lightNode.constraints = [constraint]
 //
-//            // ✅ 조명을 반영할 수 있도록 재질 수정
+//            //  조명을 반영할 수 있도록 재질 수정
 //            containerNode.enumerateChildNodes { child, _ in
 //                child.geometry?.materials.forEach {
 //                    $0.lightingModel = .physicallyBased
@@ -340,7 +340,7 @@ class SimulationViewController: UIViewController , UIDocumentPickerDelegate,Furn
 
 
 
-        // ✅ 크기 조절
+        // 크기 조절
         let (minVec, maxVec) = containerNode.boundingBox
         let size = SCNVector3(maxVec.x - minVec.x, maxVec.y - minVec.y, maxVec.z - minVec.z)
         let maxSize: Float = 1.0
@@ -352,18 +352,18 @@ class SimulationViewController: UIViewController , UIDocumentPickerDelegate,Furn
 
         containerNode.position = SCNVector3(0, 0, 0)
 
-        // ✅ 씬 없으면 새로 생성
+        // 씬 없으면 새로 생성
         if sceneView.scene == nil {
             sceneView.scene = SCNScene()
         }
 
-        // ✅ 기존 모델 제거
+        // 기존 모델 제거
         if let old = sceneView.scene?.rootNode.childNode(withName: containerNode.name!, recursively: true) {
             old.removeFromParentNode()
         }
 
         sceneView.scene?.rootNode.addChildNode(containerNode)
-        print("✅ 모델 추가 완료")
+        print(" 모델 추가 완료")
     }
 
     
