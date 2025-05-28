@@ -1,9 +1,3 @@
-//
-//  Selected3dFurnitureViewController.swift
-//  test3
-//
-//  Created by 이택 on 5/16/25.
-//
 
 import Foundation
 import UIKit
@@ -33,7 +27,6 @@ class Selected3dFurnitureViewController: UIViewController, UITableViewDelegate, 
     
     
     
-    // 📌 UITableViewDataSource
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return usdzFiles.count
     }
@@ -50,7 +43,7 @@ class Selected3dFurnitureViewController: UIViewController, UITableViewDelegate, 
         let fileName = usdzFiles[indexPath.row]
         
         furnitureDelegate?.didSelectUSDZModel(named: fileName)
-        print("✅ \(fileName).usdz 선택 → SCNView에 선택됨")
+        print(" \(fileName).usdz 선택 → SCNView에 선택됨")
 
         dismiss(animated: true)
     }
