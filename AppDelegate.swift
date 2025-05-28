@@ -1,9 +1,3 @@
-//
-//  AppDelegate.swift
-//  University_Project
-//
-//  Created by 이택 on 5/19/25.
-//
 
 import UIKit
 import RoomPlan
@@ -17,7 +11,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         return true
     }
 
-    // MARK: UISceneSession Lifecycle
     func application(_ application: UIApplication,
                      configurationForConnecting connectingSceneSession: UISceneSession,
                      options: UIScene.ConnectionOptions) -> UISceneConfiguration {
@@ -32,6 +25,5 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
     func application(_ application: UIApplication,
                      didDiscardSceneSessions sceneSessions: Set<UISceneSession>) {
-        // 사용자가 세션을 종료했을 때 처리할 작업 (일반적으로 비워둬도 무방)
     }
 }
