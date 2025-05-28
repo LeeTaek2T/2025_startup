@@ -1,9 +1,3 @@
-/*
-See the LICENSE.txt file for this sample’s licensing information.
-
-Abstract:
-The sample app's main view controller that manages the scanning process.
-*/
 
 import UIKit
 import RoomPlan
@@ -28,7 +22,6 @@ class RoomCaptureViewController: UIViewController, RoomCaptureViewDelegate, Room
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        // Set up after loading the view.
         setupRoomCaptureView()
         activityIndicator?.stopAnimating()
     }
@@ -65,12 +58,10 @@ class RoomCaptureViewController: UIViewController, RoomCaptureViewDelegate, Room
         setCompleteNavBar()
     }
     
-    // Decide to post-process and show the final results.
     func captureView(sh3ouldPresent roomDataForProcessing: CapturedRoomData, error: Error?) -> Bool {
         return true
     }
     
-    // Access the final post-processed results.
     func captureView(didPresent processedResult: CapturedRoom, error: Error?) {
         finalResults = processedResult
         self.exportButton?.isEnabled = true
@@ -87,9 +78,6 @@ class RoomCaptureViewController: UIViewController, RoomCaptureViewDelegate, Room
         navigationController?.dismiss(animated: true)
     }
     
-    // Export the USDZ output by specifying the `.parametric` export option.
-    // Alternatively, `.mesh` exports a nonparametric file and `.all`
-    // exports both in a single USDZ.
     @IBAction func exportResults(_ sender: UIButton) {
         let destinationFolderURL = FileManager.default.temporaryDirectory.appending(path: "Export")
         let destinationURL = destinationFolderURL.appending(path: "Room.usdz")
